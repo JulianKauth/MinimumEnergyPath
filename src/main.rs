@@ -3,7 +3,6 @@ use crate::pes::Gaussian;
 use crate::image::Image;
 use crate::chain::Chain;
 use crate::point::Point;
-use std::f64::consts::FRAC_PI_2;
 
 mod point;
 mod pes;
