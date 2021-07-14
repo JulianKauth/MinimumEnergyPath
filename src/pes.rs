@@ -1,6 +1,7 @@
 use crate::point::Point;
 use crate::point::Line;
 
+#[derive(Debug, Copy, Clone)]
 pub struct Gaussian {
     pub(crate) a: f64,
     pub(crate) x0: f64,
@@ -25,6 +26,7 @@ impl Gaussian {
     }
 }
 
+#[derive(Debug, Clone)]
 pub struct PES {
     pub(crate) gaussians: Vec<Gaussian>,
 }

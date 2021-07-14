@@ -1,6 +1,7 @@
 use crate::pes::PES;
 use crate::pes::Gaussian;
 use crate::point::{Chain, Point};
+use crate::image::Image;
 
 mod point;
 mod pes;
@@ -21,6 +22,9 @@ fn main() {
         Point { x: 0.0, y: 7.5 },
         20,
     );
+    //set up our image generator
+    let img = Image::new(0.0, 10.0, 0.0, 10.0, 200, pes);
+    img.paint("test.png", chain);
     //iterate
     //  move chain
     //  image
