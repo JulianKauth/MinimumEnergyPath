@@ -4,6 +4,7 @@ use crate::point::{Chain, Point};
 
 mod point;
 mod pes;
+mod image;
 
 fn main() {
     //create mep
