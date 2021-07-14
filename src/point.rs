@@ -1,4 +1,3 @@
-use crate::pes::PES;
 use std::iter::Sum;
 use std::ops::{Add, AddAssign};
 
@@ -18,11 +17,16 @@ impl Sum for Line {
 }
 
 
-
 #[derive(Debug, Copy, Clone, )]
 pub struct Point {
     pub(crate) x: f64,
     pub(crate) y: f64,
+}
+
+impl Point {
+    pub fn distance_sq(&self, other: Point) -> f64 {
+        (self.x - other.x).powi(2) + (self.y - other.y).powi(2)
+    }
 }
 
 impl Add for Point {

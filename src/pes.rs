@@ -18,10 +18,12 @@ impl Gaussian {
         self.a * (-(exponent_x + exponent_y)).exp()
     }
 
+    ///returns the negative gradient of the gauss function at the given point.
+    /// negative, because we want the arrows to point downhill
     #[inline]
     fn gradient_at(&self, p: Point) -> Line {
-        let dx = self.value_at(p) * (-(p.x - self.x0) / (2.0 * self.sig_x.powi(2)));
-        let dy = self.value_at(p) * (-(p.y - self.y0) / (2.0 * self.sig_y.powi(2)));
+        let dx = self.value_at(p) * (p.x - self.x0) / (2.0 * self.sig_x.powi(2));
+        let dy = self.value_at(p) * (p.y - self.y0) / (2.0 * self.sig_y.powi(2));
         Line { normal: Point { x: dx, y: dy } }
     }
 }
@@ -36,7 +38,7 @@ impl PES {
         self.gaussians.iter().map(|g| g.value_at(p)).sum()
     }
 
-    fn gradient_at(&self, p: Point) -> Line{
+    pub fn gradient_at(&self, p: Point) -> Line {
         self.gaussians.iter().map(|g| g.gradient_at(p)).sum()
     }
 }

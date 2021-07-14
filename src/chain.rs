@@ -19,7 +19,11 @@ impl Chain {
         Chain { elements }
     }
 
-    pub fn energy(&self, pes: PES) -> f64 {
+    pub fn energy(&self, pes: &PES) -> f64 {
         self.elements.iter().map(|&p| pes.energy_at(p)).sum()
+    }
+
+    pub fn iterate(&self){
+        //TODO: move every point according to its tangent and the gradient of the PES
     }
 }
