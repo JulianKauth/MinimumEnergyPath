@@ -1,11 +1,13 @@
 use crate::pes::PES;
 use crate::pes::Gaussian;
-use crate::point::{Chain, Point};
 use crate::image::Image;
+use crate::chain::Chain;
+use crate::point::Point;
 
 mod point;
 mod pes;
 mod image;
+mod chain;
 
 fn main() {
     //create mep
