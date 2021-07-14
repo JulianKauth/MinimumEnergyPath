@@ -34,19 +34,8 @@ impl Image {
         Point { x: pes_x, y: pes_y }
     }
 
-    ///turns the given point into a valid pixel coordinate, or returns an error
-    fn pixel_for_point(&self, p: Point) -> Option<(i32, i32)> {
-        if p.x >= self.x0 && p.x < self.x0 + self.width && p.y >= self.y0 && p.y < self.y0 + self.height {
-            let px = (p.x - self.x0) / self.width * self.resolution_x as f64;
-            let py = (p.y - self.y0) / self.height * self.resolution_y as f64;
-            Some((px as i32, self.resolution_y - 1 - py as i32))
-        } else {
-            None
-        }
-    }
-
     ///turns the given point into a pixel coordinate, no matter if that point is actually on the canvas
-    fn pixel_for_point_unsafe(&self, p: Point) -> (i32, i32) {
+    fn pixel_for_point(&self, p: Point) -> (i32, i32) {
         let px = (p.x - self.x0) / self.width * self.resolution_x as f64;
         let py = (p.y - self.y0) / self.height * self.resolution_y as f64;
         (px as i32, self.resolution_y - 1 - py as i32)
@@ -58,8 +47,8 @@ impl Image {
 
     fn draw_line(&self, image_buffer: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, start: Point, end: Point) {
         //https://en.wikipedia.org/wiki/Digital_differential_analyzer_(graphics_algorithm)
-        let (img_start_x, img_start_y) = self.pixel_for_point_unsafe(start);
-        let (img_end_x, img_end_y) = self.pixel_for_point_unsafe(end);
+        let (img_start_x, img_start_y) = self.pixel_for_point(start);
+        let (img_end_x, img_end_y) = self.pixel_for_point(end);
         let dx = img_end_x - img_start_x;
         let dy = img_end_y - img_start_y;
         let steps = if dx.abs() > dy.abs() { dx.abs() } else { dy.abs() };
@@ -78,7 +67,7 @@ impl Image {
     }
 
     fn draw_circle(&self, image_buffer: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, p: Point, radius: f64) {
-        let (x, y) = self.pixel_for_point_unsafe(p);
+        let (x, y) = self.pixel_for_point(p);
         let rx = (radius as f64 * self.resolution_x as f64 / self.width) as i32;
         let ry = (radius as f64 * self.resolution_y as f64 / self.height) as i32;
         for dx in -rx..=rx {
