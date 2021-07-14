@@ -26,7 +26,7 @@ fn main() {
         20,
     );
     //set up our image generator
-    let img = Image::new(-2.0, 9.0, -2.0, 9.0, 2000, 2000);
+    let img = Image::new(-2.0, 9.0, -2.0, 9.0, 2000, 2000, &pes);
 
     // iterate until we reached a stable state
     let stable_limit = 1e-6;

@@ -13,10 +13,11 @@ pub struct Image {
     height: f64,
     resolution_x: i32,
     resolution_y: i32,
+    image: ImageBuffer<Rgb<u8>, Vec<u8>>
 }
 
 impl Image {
-    pub fn new(x0: f64, x1: f64, y0: f64, y1: f64, resolution_x: i32, resolution_y: i32) -> Self {
+    pub fn new(x0: f64, x1: f64, y0: f64, y1: f64, resolution_x: i32, resolution_y: i32, pes: &PES) -> Self {
         Image {
             x0,
             y0,
@@ -24,6 +25,25 @@ impl Image {
             height: y1 - y0,
             resolution_x,
             resolution_y,
+            image: image::ImageBuffer::new(resolution_x as u32, resolution_y as u32)
+        }
+    }
+
+    ///draw the PES so we don't need to query the PES for every single pixel in every loop
+    fn initialize_pes_image(&mut self, pes: &PES){
+        // figure out what our minimum and maximum pixel values will be
+        let min = self.image.enumerate_pixels_mut().map(
+            |(x, y, _pixel)| pes.energy_at(self.point_for_pixel(x, y))
+        ).min_by(|&x, &y| x.partial_cmp(&y).unwrap()).unwrap();
+        let max = self.image.enumerate_pixels_mut().map(
+            |(x, y, _pixel)| pes.energy_at(self.point_for_pixel(x, y))
+        ).max_by(|&x, &y| x.partial_cmp(&y).unwrap()).unwrap();
+
+        // paint the PES rescaled to 0-255
+        for (x, y, pixel) in self.image.enumerate_pixels_mut() {
+            let energy = pes.energy_at(self.point_for_pixel(x, y));
+            let intensity = ((energy - min) / (max - min) * 255f64) as u8;
+            *pixel = image::Rgb([intensity, intensity, intensity]);
         }
     }
 
@@ -82,43 +102,27 @@ impl Image {
         }
     }
 
-    fn draw_chain(&self, imgbuf: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, points: &Chain) {
+    fn draw_chain(&self, image_buffer: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, points: &Chain) {
         for point in &points.elements {
-            self.draw_circle(imgbuf, *point, 0.1);
+            self.draw_circle(image_buffer, *point, 0.1);
         }
     }
 
-    fn draw_gradients(&self, imgbuf: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, points: &Chain, pes: &PES) {
+    fn draw_gradients(&self, image_buffer: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, points: &Chain, pes: &PES) {
         for point in &points.elements {
-            self.draw_line(imgbuf, *point, *point + pes.gradient_at(*point).normal);
+            self.draw_line(image_buffer, *point, *point + pes.gradient_at(*point).normal);
         }
     }
 
     pub fn paint(&self, filename: &str, points: &Chain, pes: &PES) {
-        // initialize the image buffer
-        let mut imgbuf = image::ImageBuffer::new(self.resolution_x as u32, self.resolution_y as u32);
-
-        // figure out what our minimum and maximum pixel values will be
-        let min = imgbuf.enumerate_pixels_mut().map(
-            |(x, y, _pixel)| pes.energy_at(self.point_for_pixel(x, y))
-        ).min_by(|&x, &y| x.partial_cmp(&y).unwrap()).unwrap();
-        let max = imgbuf.enumerate_pixels_mut().map(
-            |(x, y, _pixel)| pes.energy_at(self.point_for_pixel(x, y))
-        ).max_by(|&x, &y| x.partial_cmp(&y).unwrap()).unwrap();
-
-        // paint the PES rescaled to 0-255
-        for (x, y, pixel) in imgbuf.enumerate_pixels_mut() {
-            let energy = pes.energy_at(self.point_for_pixel(x, y));
-            let intensity = ((energy - min) / (max - min) * 255f64) as u8;
-            *pixel = image::Rgb([intensity, intensity, intensity]);
-        }
+        let mut image_buffer = self.image.clone();
 
         //add the points along our chain
-        self.draw_chain(&mut imgbuf, points);
+        self.draw_chain(&mut image_buffer, points);
 
         //add the gradients of the points
-        self.draw_gradients(&mut imgbuf, points, pes);
+        self.draw_gradients(&mut image_buffer, points, pes);
 
-        imgbuf.save(filename).unwrap();
+        image_buffer.save(filename).unwrap();
     }
 }
