@@ -209,6 +209,9 @@ fn print_help_text() {
     let help_text = r#"
     Simulation of finding the Minimum Energy Path on a Potential Energy Surface
 
+    Reads a config file (example one produced on first run) and saves resulting
+    images to ./images/ (directory is created if it doesn't exist)
+
     usage:
     minimum_energy_path                   simulate according to the config file
     minimum_energy_path ( --help | -h )   show this help
