@@ -94,10 +94,10 @@ fn ensure_image_directory() {
 fn load_config() -> Config {
     match fs::read_to_string("MEP_config.txt") {
         Ok(data) => {
-            println!("Read config file 'MEP_config.txt'!");
+            println!("Read config file 'MEP_config.txt'.");
             match serde_json::de::from_str(&*data) {
                 Ok(json) => {
-                    println!("Successfully parsed the config file!");
+                    println!("Successfully parsed the config file.");
                     println!("Simulating...");
                     return json;
                 }
