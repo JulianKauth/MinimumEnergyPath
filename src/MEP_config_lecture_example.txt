@@ -1,7 +1,7 @@
 {
-  "convergence_limit": 1e-6,
-  "use_springs": false,
+  "convergence_limit": 1e-3,
   "pes": {
+    "scale": 0.1,
     "gaussians": [
       {"a": -7.0,
         "x0": 15.0,"sig_x": 5.0,
@@ -38,6 +38,9 @@
     ]
   },
   "path": {
+    "use_springs": 0.3,
+    "pin_ends": true,
+    "relax_ends": true,
     "start": {
       "x": 21.5,
       "y": 5.5
@@ -46,16 +49,17 @@
       "x": 9.5,
       "y": 19.5
     },
-    "elements": 100
+    "elements": 50
   },
   "image": {
+    "contour_lines": 10,
     "x0": 0.0,
     "y0": 0.0,
     "width": 27.0,
     "height": 25.0,
-    "resolution_x": 4000,
-    "resolution_y": 4000,
-    "point_size": 0.2,
-    "line_width": 0.1
+    "resolution_x": 2700,
+    "resolution_y": 2500,
+    "point_size": 0.1,
+    "line_width": 0.02
   }
 }

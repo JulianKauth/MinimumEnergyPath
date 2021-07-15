@@ -141,7 +141,7 @@ fn sample_config_text() -> String {
 }
 
 fn sample_config() -> Config {
-    let stable_limit = 1e-4;
+    let stable_limit = 1e-3;
 
     let pes = PES {
         scale: 0.3,
