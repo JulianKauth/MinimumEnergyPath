@@ -62,7 +62,7 @@ fn main() {
         energy = chain.energy(&pes);
 
         // print info
-        print!("iteration: {:4} resulted in energy: {:15.10} and took: ", counter, energy);
+        print!("iteration: {:4} resulted in average energy: {:15.10} and took: ", counter, energy);
         print_elapsed_time(&mut start_time);
 
         // stop the loop if the last iteration was barely able to improve the situation

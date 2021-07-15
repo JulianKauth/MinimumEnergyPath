@@ -34,7 +34,8 @@ impl Chain {
     }
 
     pub fn energy(&self, pes: &PES) -> f64 {
-        self.elements.iter().map(|&p| pes.energy_at(p)).sum()
+        let total_energy: f64 = self.elements.iter().map(|&p| pes.energy_at(p)).sum();
+        total_energy / self.config.elements as f64
     }
 
     pub fn iterate(&mut self, pes: &PES) {
