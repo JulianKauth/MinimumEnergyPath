@@ -23,10 +23,9 @@ impl Point {
 
     pub fn normed(&self) -> Self {
         let scale = (self.x.powi(2) + self.y.powi(2)).sqrt();
-        Point {
-            x: self.x / scale,
-            y: self.y / scale,
-        }
+        let x = if f64::is_nan(self.x / scale) { 0.0 } else { self.x / scale };
+        let y = if f64::is_nan(self.y / scale) { 0.0 } else { self.y / scale };
+        Point { x, y }
     }
 
     pub fn dot_product(&self, other: Point) -> f64 {
