@@ -11,6 +11,7 @@ extern crate image;
 
 #[derive(Debug, Copy, Clone, Deserialize, Serialize)]
 pub struct ImageConfig {
+    pub(crate) contour_lines: f64,
     pub(crate) x0: f64,
     pub(crate) y0: f64,
     pub(crate) width: f64,
@@ -55,7 +56,8 @@ impl Image {
         // paint the PES rescaled to 0-255
         for (x, y, pixel) in self.image.enumerate_pixels_mut() {
             let energy = pes.energy_at(config.point_for_pixel(x, y));
-            let intensity = ((energy - min) / (max - min) * 255f64) as u8;
+            let intensity = (energy - min) / (max - min) * 255f64 * self.config.contour_lines;
+            let intensity = (intensity as u32 & 0xffu32) as u8;
             *pixel = image::Rgb([intensity, intensity, intensity]);
         }
     }

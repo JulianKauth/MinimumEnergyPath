@@ -166,6 +166,7 @@ fn sample_config() -> Config {
     };
 
     let image_config = ImageConfig {
+        contour_lines: 10.0,
         x0: 0.0,
         y0: 0.0,
         width: 27.0,
