@@ -1,6 +1,5 @@
 use crate::point::Point;
 use crate::pes::PES;
-use std::f64::consts::FRAC_PI_2;
 
 
 #[derive(Debug, Copy, Clone, Deserialize, Serialize)]
