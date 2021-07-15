@@ -1,6 +1,7 @@
 use std::iter::Sum;
 use std::ops::{Add, AddAssign, Sub, Mul, Div};
 use std::f64::consts::FRAC_PI_2;
+use crate::pes::PES;
 
 
 #[derive(Debug, Copy, Clone, Deserialize, Serialize)]
@@ -10,6 +11,24 @@ pub struct Point {
 }
 
 impl Point {
+    pub fn move_to_minimum(&mut self, pes: &PES, convergence_limit: f64) {
+        let mut last_energy: f64;
+        let mut energy = pes.energy_at(*self);
+        loop {
+            // move point towards minimum
+            *self += pes.gradient_at(*self);
+
+            // update energy values
+            last_energy = energy;
+            energy = pes.energy_at(*self);
+
+            // stop iterating if we can't change anything anymore
+            if last_energy - energy < convergence_limit {
+                break;
+            }
+        }
+    }
+
     pub fn distance_sq(&self, other: Point) -> f64 {
         (self.x - other.x).powi(2) + (self.y - other.y).powi(2)
     }
@@ -44,7 +63,7 @@ impl Point {
         let a = prev - *self; //vector from this point to the previous one
         let b = next - *self; //vector from this point to the next one
         let spring = -spring_effect * (a + b) / 2; //how much we need to move to land in the middle of the two other points
-        let spring_forces  = tangent.dot_product(spring) * tangent;
+        let spring_forces = tangent.dot_product(spring) * tangent;
 
         *self + gradient_forces + spring_forces
     }

@@ -36,7 +36,9 @@ fn main() {
     //create mep
     let pes = config.pes;
     //create chain
-    let mut chain = Chain::new(config.path);
+    let mut chain_config = config.path;
+    chain_config.relax_ends(&pes, config.convergence_limit);
+    let mut chain = Chain::new(chain_config);
 
     //set up our image generator
     let img = Image::new(config.image, &pes);
@@ -151,6 +153,7 @@ fn sample_config() -> Config {
     let chain_config = ChainConfig {
         use_springs: 0.0,
         pin_ends: false,
+        relax_ends: true,
         start: Point { x: 7.5, y: 0.0 },
         end: Point { x: 0.0, y: 7.5 },
         elements: 20,

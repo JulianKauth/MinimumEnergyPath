@@ -6,9 +6,19 @@ use crate::pes::PES;
 pub struct ChainConfig {
     pub(crate) use_springs: f64,
     pub(crate) pin_ends: bool,
+    pub(crate) relax_ends: bool,
     pub(crate) start: Point,
     pub(crate) end: Point,
     pub(crate) elements: usize,
+}
+
+impl ChainConfig {
+    pub fn relax_ends(&mut self, pes: &PES, convergence_limit: f64) {
+        if self.relax_ends {
+            self.start.move_to_minimum(pes, convergence_limit);
+            self.end.move_to_minimum(pes, convergence_limit);
+        }
+    }
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
