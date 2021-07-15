@@ -60,7 +60,7 @@ impl Image {
         }
     }
 
-    fn draw_line(&self, image_buffer: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, start: Point, end: Point) {
+    fn draw_line(&self, image_buffer: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, start: Point, end: Point, color: &[u8; 3]) {
         //https://en.wikipedia.org/wiki/Digital_differential_analyzer_(graphics_algorithm)
         let (img_start_x, img_start_y) = self.config.pixel_for_point(start);
         let (img_end_x, img_end_y) = self.config.pixel_for_point(end);
@@ -75,7 +75,7 @@ impl Image {
             if !self.config.pixel_in_image(x as i32, y as i32) {
                 continue;
             }
-            image_buffer.put_pixel(x as u32, y as u32, image::Rgb([0, 0, 255u8]));
+            image_buffer.put_pixel(x as u32, y as u32, image::Rgb(*color));
             x += dx;
             y += dy;
         }
@@ -105,7 +105,15 @@ impl Image {
 
     fn draw_gradients(&self, image_buffer: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, points: &Chain, pes: &PES) {
         for point in &points.elements {
-            self.draw_line(image_buffer, *point, *point + pes.gradient_at(*point));
+            self.draw_line(image_buffer, *point, *point + pes.gradient_at(*point), &[0, 0, 255u8]);
+        }
+    }
+
+    fn draw_connections(&self, image_buffer: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, points: &Chain) {
+        for i in 0..points.config.elements - 1 {
+            let a = *points.elements.get(i).unwrap();
+            let b = *points.elements.get(i + 1).unwrap();
+            self.draw_line(image_buffer, a, b, &[0, 255u8, 0])
         }
     }
 
@@ -117,6 +125,9 @@ impl Image {
 
         //add the gradients of the points
         self.draw_gradients(&mut image_buffer, points, pes);
+
+        //add the connections between the points
+        self.draw_connections(&mut image_buffer, points);
 
         image_buffer.save(filename).unwrap();
     }
