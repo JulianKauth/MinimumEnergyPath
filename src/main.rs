@@ -15,13 +15,11 @@ mod pes;
 mod image;
 mod chain;
 
-//todo: implement the method with springs and make that an option in the json
 //todo: make help text
 
 #[derive(Debug, Deserialize, Serialize)]
 struct Config {
     convergence_limit: f64,
-    use_springs: bool,
     pes: PES,
     path: ChainConfig,
     image: ImageConfig,
@@ -56,7 +54,7 @@ fn main() {
         img.paint(&*format!("images/progress_{:04}.png", counter), &chain, &pes);
 
         //move to a better position
-        chain.iterate(&pes, config.use_springs);
+        chain.iterate(&pes);
 
         // increment counter and update energy values
         counter += 1;
@@ -141,8 +139,7 @@ fn sample_config_text() -> String {
 }
 
 fn sample_config() -> Config {
-    let stable_limit = 1e-6;
-    let use_springs = false;
+    let stable_limit = 1e-4;
 
     let pes = PES {
         gaussians: vec![
@@ -152,6 +149,8 @@ fn sample_config() -> Config {
         ]
     };
     let chain_config = ChainConfig {
+        use_springs: false,
+        pin_ends: false,
         start: Point { x: 7.5, y: 0.0 },
         end: Point { x: 0.0, y: 7.5 },
         elements: 20,
@@ -170,7 +169,6 @@ fn sample_config() -> Config {
 
     Config {
         convergence_limit: stable_limit,
-        use_springs,
         pes: pes.clone(),
         path: chain_config,
         image: image_config,

@@ -5,6 +5,8 @@ use std::f64::consts::FRAC_PI_2;
 
 #[derive(Debug, Copy, Clone, Deserialize, Serialize)]
 pub struct ChainConfig {
+    pub(crate) use_springs: bool,
+    pub(crate) pin_ends: bool,
     pub(crate) start: Point,
     pub(crate) end: Point,
     pub(crate) elements: usize,
@@ -12,6 +14,7 @@ pub struct ChainConfig {
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Chain {
+    pub(crate) config: ChainConfig,
     pub(crate) elements: Vec<Point>,
 }
 
@@ -25,35 +28,62 @@ impl Chain {
         for i in 0..=config.elements {
             elements.push(Point { x: x + dx * i as f64, y: y + dy * i as f64 })
         }
-        Chain { elements }
+        Chain {
+            config,
+            elements,
+        }
     }
 
     pub fn energy(&self, pes: &PES) -> f64 {
         self.elements.iter().map(|&p| pes.energy_at(p)).sum()
     }
 
-    //todo: implement the method with springs as well (make it an option to iterate)
-
-    pub fn iterate(&mut self, pes: &PES, use_springs: bool) {
+    pub fn iterate(&mut self, pes: &PES) {
         let size = self.elements.len();
-
         let mut next_instance = Vec::with_capacity(size);
-        next_instance.push(*self.elements.get(0).unwrap());
-        // all the points that have two neighbors. Start and end don't move
+
+        // start point
+        if self.config.pin_ends {
+            next_instance.push(*self.elements.get(0).unwrap());
+        } else {
+            let this = *self.elements.get(0).unwrap();
+            let next = *self.elements.get(1).unwrap();
+            next_instance.push(
+                this.move_perpendicular_to(
+                    this,
+                    next,
+                    pes.gradient_at(this),
+                    false,
+                )
+            );
+        }
+
+        // all the points that have two neighbors. Start and end need to be treated separately
         for i in 1..size - 1 {
             let prev = *self.elements.get(i - 1).unwrap();
             let this = *self.elements.get(i).unwrap();
             let next = *self.elements.get(i + 1).unwrap();
-
-            let tangent = (prev - next).rotate(FRAC_PI_2).normed();
-            let gradient = pes.gradient_at(this);
-
-            // get the step distance for this vector
-            // see https://www.youtube.com/watch?v=ePIwYHF2O4s
-            let alpha = tangent.dot_product(gradient);
-            next_instance.push(this + alpha * tangent);
+            next_instance.push(this.move_perpendicular_to(
+                prev,
+                next,
+                pes.gradient_at(this),
+                self.config.use_springs,
+            ));
         }
-        next_instance.push(*self.elements.get(size - 1).unwrap());
+
+        // end point
+        if self.config.pin_ends {
+            next_instance.push(*self.elements.get(size - 1).unwrap());
+        } else {
+            let prev = *self.elements.get(size - 2).unwrap();
+            let this = *self.elements.get(size - 1).unwrap();
+            next_instance.push(this.move_perpendicular_to(
+                prev,
+                this,
+                pes.gradient_at(this),
+                false,
+            ));
+        }
 
         self.elements = next_instance;
     }

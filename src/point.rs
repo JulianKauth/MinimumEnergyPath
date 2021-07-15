@@ -1,5 +1,6 @@
 use std::iter::Sum;
 use std::ops::{Add, AddAssign, Sub, Mul};
+use std::f64::consts::FRAC_PI_2;
 
 
 #[derive(Debug, Copy, Clone, Deserialize, Serialize)]
@@ -30,6 +31,25 @@ impl Point {
 
     pub fn dot_product(&self, other: Point) -> f64 {
         self.x * other.x + self.y * other.y
+    }
+
+    pub fn move_perpendicular_to(&self, prev: Point, next: Point, gradient: Point, use_springs: bool) -> Self {
+        let tangent = (prev - next).rotate(FRAC_PI_2).normed();
+
+        // get the step distance for this vector
+        // see https://www.youtube.com/watch?v=ePIwYHF2O4s
+        let alpha = tangent.dot_product(gradient);
+        let gradient_forces = alpha * tangent;
+
+        let spring_forces = if use_springs {
+            let a = prev - *self; //vector from this point to the previous one
+            let b = next - *self; //vector from this point to the next one
+            (a + b) / 2 //how much we need to move to land in the middle of the two other points
+        } else {
+            Point { x: 0.0, y: 0.0 }
+        };
+
+        self + gradient_forces + spring_forces
     }
 }
 
