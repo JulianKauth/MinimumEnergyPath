@@ -38,7 +38,7 @@
     ]
   },
   "path": {
-    "use_springs": 0.3,
+    "spring_constant": 0.3,
     "pin_ends": true,
     "relax_ends": true,
     "start": {
