@@ -115,7 +115,7 @@ impl Image {
     }
 
     fn draw_connections(&self, image_buffer: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, points: &Chain) {
-        for i in 0..points.config.elements - 1 {
+        for i in 0..points.config.elements {
             let a = *points.elements.get(i).unwrap();
             let b = *points.elements.get(i + 1).unwrap();
             self.draw_line(image_buffer, a, b, &[0, 255u8, 0])
