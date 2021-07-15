@@ -75,22 +75,27 @@ impl Image {
             if !self.config.pixel_in_image(x as i32, y as i32) {
                 continue;
             }
-            image_buffer.put_pixel(x as u32, y as u32, image::Rgb(*color));
+            if self.config.line_width <= 2.0f64.sqrt() {
+                image_buffer.put_pixel(x as u32, y as u32, image::Rgb(*color));
+            } else {
+                self.draw_circle(image_buffer, Point { x, y }, self.config.line_width);
+            }
+
             x += dx;
             y += dy;
         }
     }
 
-    fn draw_circle(&self, image_buffer: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, p: Point) {
+    fn draw_circle(&self, image_buffer: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, p: Point, radius: f64) {
         let (x, y) = self.config.pixel_for_point(p);
-        let rx = (self.config.point_size * self.config.resolution_x as f64 / self.config.width) as i32;
-        let ry = (self.config.point_size as f64 * self.config.resolution_y as f64 / self.config.height) as i32;
+        let rx = (radius * self.config.resolution_x as f64 / self.config.width) as i32;
+        let ry = (radius * self.config.resolution_y as f64 / self.config.height) as i32;
         for dx in -rx..=rx {
             for dy in -ry..=ry {
                 let pos_x = x + dx;
                 let pos_y = y + dy;
                 if self.config.pixel_in_image(pos_x, pos_y)
-                    && p.distance_sq(self.config.point_for_pixel(pos_x as u32, pos_y as u32)) < self.config.point_size.powi(2) {
+                    && p.distance_sq(self.config.point_for_pixel(pos_x as u32, pos_y as u32)) < radius.powi(2) {
                     image_buffer.put_pixel(pos_x as u32, pos_y as u32, image::Rgb([255, 0, 0]))
                 }
             }
@@ -99,7 +104,7 @@ impl Image {
 
     fn draw_chain(&self, image_buffer: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, points: &Chain) {
         for point in &points.elements {
-            self.draw_circle(image_buffer, *point);
+            self.draw_circle(image_buffer, *point, self.config.point_size);
         }
     }
 
