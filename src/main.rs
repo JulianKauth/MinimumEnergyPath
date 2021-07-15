@@ -157,7 +157,7 @@ fn sample_config() -> Config {
         ],
     };
     let chain_config = ChainConfig {
-        use_springs: 0.0,
+        spring_constant: 0.0,
         pin_ends: true,
         relax_ends: true,
         start: Point { x: 23.0, y: 5.0 },

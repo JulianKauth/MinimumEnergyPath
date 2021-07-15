@@ -4,7 +4,7 @@ use crate::pes::PES;
 
 #[derive(Debug, Copy, Clone, Deserialize, Serialize)]
 pub struct ChainConfig {
-    pub(crate) use_springs: f64,
+    pub(crate) spring_constant: f64,
     pub(crate) pin_ends: bool,
     pub(crate) relax_ends: bool,
     pub(crate) start: Point,
@@ -77,7 +77,7 @@ impl Chain {
                 prev,
                 next,
                 pes.gradient_at(this),
-                self.config.use_springs,
+                self.config.spring_constant,
             ));
         }
 
