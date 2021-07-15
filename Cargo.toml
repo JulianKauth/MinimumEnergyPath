@@ -7,3 +7,6 @@ edition = "2018"
 
 [dependencies]
 image = "0.23.14"
+serde = "1.0.126"
+serde_derive = "1.0.126"
+serde_json = "1.0.64"

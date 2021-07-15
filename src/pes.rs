@@ -1,7 +1,6 @@
 use crate::point::Point;
-use crate::point::Line;
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Deserialize, Serialize)]
 pub struct Gaussian {
     pub(crate) a: f64,
     pub(crate) x0: f64,
@@ -21,14 +20,14 @@ impl Gaussian {
     ///returns the negative gradient of the gauss function at the given point.
     /// negative, because we want the arrows to point downhill
     #[inline]
-    fn gradient_at(&self, p: Point) -> Line {
+    fn gradient_at(&self, p: Point) -> Point {
         let dx = self.value_at(p) * (p.x - self.x0) / (2.0 * self.sig_x.powi(2));
         let dy = self.value_at(p) * (p.y - self.y0) / (2.0 * self.sig_y.powi(2));
-        Line { normal: Point { x: dx, y: dy } }
+        Point { x: dx, y: dy }
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct PES {
     pub(crate) gaussians: Vec<Gaussian>,
 }
@@ -38,7 +37,7 @@ impl PES {
         self.gaussians.iter().map(|g| g.value_at(p)).sum()
     }
 
-    pub fn gradient_at(&self, p: Point) -> Line {
+    pub fn gradient_at(&self, p: Point) -> Point {
         self.gaussians.iter().map(|g| g.gradient_at(p)).sum()
     }
 }

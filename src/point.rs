@@ -1,23 +1,8 @@
 use std::iter::Sum;
 use std::ops::{Add, AddAssign, Sub, Mul};
 
-#[derive(Debug, Copy, Clone)]
-pub struct Line {
-    pub(crate) normal: Point,
-}
 
-impl Sum for Line {
-    fn sum<I: Iterator<Item=Self>>(iter: I) -> Self {
-        let mut re = Point { x: 0.0, y: 0.0 };
-        for line in iter {
-            re += line.normal;
-        }
-        Line { normal: re }
-    }
-}
-
-
-#[derive(Debug, Copy, Clone, )]
+#[derive(Debug, Copy, Clone, Deserialize, Serialize)]
 pub struct Point {
     pub(crate) x: f64,
     pub(crate) y: f64,
@@ -43,8 +28,18 @@ impl Point {
         }
     }
 
-    pub fn dot_product(&self, other: Point) -> f64{
+    pub fn dot_product(&self, other: Point) -> f64 {
         self.x * other.x + self.y * other.y
+    }
+}
+
+impl Sum for Point {
+    fn sum<I: Iterator<Item=Self>>(iter: I) -> Self {
+        let mut re = Point { x: 0.0, y: 0.0 };
+        for point in iter {
+            re += point;
+        }
+        re
     }
 }
 
@@ -74,13 +69,13 @@ impl Sub for Point {
     }
 }
 
-impl Mul<Point> for f64{
+impl Mul<Point> for f64 {
     type Output = Point;
 
     fn mul(self, rhs: Point) -> Self::Output {
-        Point{
+        Point {
             x: rhs.x * self,
-            y: rhs.y * self
+            y: rhs.y * self,
         }
     }
 }

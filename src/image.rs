@@ -5,17 +5,18 @@ use self::image::{ImageBuffer, Rgb};
 
 extern crate image;
 
+
 // todo: make the point size configurable
 // todo: make the line width configurable
 
-#[derive(Debug, Copy, Clone)]
-struct ImageConfig {
-    x0: f64,
-    y0: f64,
-    width: f64,
-    height: f64,
-    resolution_x: i32,
-    resolution_y: i32,
+#[derive(Debug, Copy, Clone, Deserialize, Serialize)]
+pub struct ImageConfig {
+    pub(crate) x0: f64,
+    pub(crate) y0: f64,
+    pub(crate) width: f64,
+    pub(crate) height: f64,
+    pub(crate) resolution_x: i32,
+    pub(crate) resolution_y: i32,
 }
 
 #[derive(Debug)]
@@ -25,17 +26,10 @@ pub struct Image {
 }
 
 impl Image {
-    pub fn new(x0: f64, x1: f64, y0: f64, y1: f64, resolution_x: i32, resolution_y: i32, pes: &PES) -> Self {
+    pub fn new(image_config: ImageConfig, pes: &PES) -> Self {
         let mut img = Image {
-            config: ImageConfig {
-                x0,
-                y0,
-                width: x1 - x0,
-                height: y1 - y0,
-                resolution_x,
-                resolution_y,
-            },
-            image: image::ImageBuffer::new(resolution_x as u32, resolution_y as u32),
+            config: image_config,
+            image: image::ImageBuffer::new(image_config.resolution_x as u32, image_config.resolution_y as u32),
         };
         img.initialize_pes_image(pes);
         img
@@ -109,7 +103,7 @@ impl Image {
 
     fn draw_gradients(&self, image_buffer: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, points: &Chain, pes: &PES) {
         for point in &points.elements {
-            self.draw_line(image_buffer, *point, *point + pes.gradient_at(*point).normal);
+            self.draw_line(image_buffer, *point, *point + pes.gradient_at(*point));
         }
     }
 
