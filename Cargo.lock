@@ -3,16 +3,6 @@
 version = 3
 
 [[package]]
-name = "MinumumEnergyPath"
-version = "0.1.0"
-dependencies = [
- "image",
- "serde",
- "serde_derive",
- "serde_json",
-]
-
-[[package]]
 name = "adler"
 version = "1.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -220,6 +210,16 @@ checksum = "a92518e98c078586bc6c934028adcca4c92a53d6a958196de835170a01d84e4b"
 dependencies = [
  "adler",
  "autocfg",
+]
+
+[[package]]
+name = "minumum_energy_path"
+version = "0.1.0"
+dependencies = [
+ "image",
+ "serde",
+ "serde_derive",
+ "serde_json",
 ]
 
 [[package]]
