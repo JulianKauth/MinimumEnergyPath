@@ -29,15 +29,18 @@ impl Gaussian {
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct PES {
+    pub(crate) scale: f64,
     pub(crate) gaussians: Vec<Gaussian>,
 }
 
 impl PES {
     pub(crate) fn energy_at(&self, p: Point) -> f64 {
-        self.gaussians.iter().map(|g| g.value_at(p)).sum()
+        let energy: f64 = self.gaussians.iter().map(|g| g.value_at(p)).sum();
+        self.scale * energy
     }
 
     pub fn gradient_at(&self, p: Point) -> Point {
-        self.gaussians.iter().map(|g| g.gradient_at(p)).sum()
+        let gradient: Point = self.gaussians.iter().map(|g| g.gradient_at(p)).sum();
+        self.scale * gradient
     }
 }

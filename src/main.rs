@@ -144,6 +144,7 @@ fn sample_config() -> Config {
     let stable_limit = 1e-4;
 
     let pes = PES {
+        scale: 1.0,
         gaussians: vec![
             Gaussian { a: -5.0, x0: 5.0, sig_x: 2.0, y0: 5.0, sig_y: 2.0 },
             Gaussian { a: -5.0, x0: 0.0, sig_x: 2.0, y0: 5.0, sig_y: 2.0 },
