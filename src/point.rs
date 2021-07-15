@@ -33,16 +33,18 @@ impl Point {
     }
 
     pub fn move_perpendicular_to(&self, prev: Point, next: Point, gradient: Point, spring_effect: f64) -> Self {
-        let tangent = (prev - next).rotate(FRAC_PI_2).normed();
+        let tangent = (prev - next).normed();
+        let normal = tangent.rotate(FRAC_PI_2);
 
         // get the step distance for this vector
         // see https://www.youtube.com/watch?v=ePIwYHF2O4s
-        let alpha = tangent.dot_product(gradient);
-        let gradient_forces = alpha * tangent;
+        let alpha = normal.dot_product(gradient);
+        let gradient_forces = alpha * normal;
 
         let a = prev - *self; //vector from this point to the previous one
         let b = next - *self; //vector from this point to the next one
-        let spring_forces = spring_effect * (a + b) / 2; //how much we need to move to land in the middle of the two other points
+        let spring = -spring_effect * (a + b) / 2; //how much we need to move to land in the middle of the two other points
+        let spring_forces  = tangent.dot_product(spring) * tangent;
 
         *self + gradient_forces + spring_forces
     }
