@@ -24,8 +24,9 @@ impl Chain {
         self.elements.iter().map(|&p| pes.energy_at(p)).sum()
     }
 
+    //todo: implement the method with springs as well (make it an option to iterate)
+
     pub fn iterate(&mut self, pes: &PES) {
-        //TODO: move every point according to its tangent and the gradient of the PES
         let size = self.elements.len();
 
         let mut next_instance = Vec::with_capacity(size);

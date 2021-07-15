@@ -5,6 +5,9 @@ use self::image::{ImageBuffer, Rgb};
 
 extern crate image;
 
+// todo: make the point size configurable
+// todo: make the line width configurable
+
 #[derive(Debug, Copy, Clone)]
 struct ImageConfig {
     x0: f64,
