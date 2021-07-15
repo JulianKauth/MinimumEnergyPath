@@ -17,6 +17,8 @@ pub struct ImageConfig {
     pub(crate) height: f64,
     pub(crate) resolution_x: i32,
     pub(crate) resolution_y: i32,
+    pub(crate) point_size: f64,
+    pub(crate) line_width: f64,
 }
 
 #[derive(Debug)]
@@ -79,16 +81,16 @@ impl Image {
         }
     }
 
-    fn draw_circle(&self, image_buffer: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, p: Point, radius: f64) {
+    fn draw_circle(&self, image_buffer: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, p: Point) {
         let (x, y) = self.config.pixel_for_point(p);
-        let rx = (radius as f64 * self.config.resolution_x as f64 / self.config.width) as i32;
-        let ry = (radius as f64 * self.config.resolution_y as f64 / self.config.height) as i32;
+        let rx = (self.config.point_size * self.config.resolution_x as f64 / self.config.width) as i32;
+        let ry = (self.config.point_size as f64 * self.config.resolution_y as f64 / self.config.height) as i32;
         for dx in -rx..=rx {
             for dy in -ry..=ry {
                 let pos_x = x + dx;
                 let pos_y = y + dy;
                 if self.config.pixel_in_image(pos_x, pos_y)
-                    && p.distance_sq(self.config.point_for_pixel(pos_x as u32, pos_y as u32)) < radius.powi(2) {
+                    && p.distance_sq(self.config.point_for_pixel(pos_x as u32, pos_y as u32)) < self.config.point_size.powi(2) {
                     image_buffer.put_pixel(pos_x as u32, pos_y as u32, image::Rgb([255, 0, 0]))
                 }
             }
@@ -97,7 +99,7 @@ impl Image {
 
     fn draw_chain(&self, image_buffer: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, points: &Chain) {
         for point in &points.elements {
-            self.draw_circle(image_buffer, *point, 0.1);
+            self.draw_circle(image_buffer, *point);
         }
     }
 
