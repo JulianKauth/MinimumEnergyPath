@@ -1,5 +1,5 @@
 use std::iter::Sum;
-use std::ops::{Add, AddAssign, Sub, Mul};
+use std::ops::{Add, AddAssign, Sub, Mul, Div};
 use std::f64::consts::FRAC_PI_2;
 
 
@@ -49,7 +49,7 @@ impl Point {
             Point { x: 0.0, y: 0.0 }
         };
 
-        self + gradient_forces + spring_forces
+        *self + gradient_forces + spring_forces
     }
 }
 
@@ -96,6 +96,17 @@ impl Mul<Point> for f64 {
         Point {
             x: rhs.x * self,
             y: rhs.y * self,
+        }
+    }
+}
+
+impl Div<u32> for Point {
+    type Output = Point;
+
+    fn div(self, i: u32) -> Self::Output {
+        Point {
+            x: self.x / i as f64,
+            y: self.y / i as f64,
         }
     }
 }
