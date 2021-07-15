@@ -144,31 +144,36 @@ fn sample_config() -> Config {
     let stable_limit = 1e-4;
 
     let pes = PES {
-        scale: 1.0,
+        scale: 0.3,
         gaussians: vec![
-            Gaussian { a: -5.0, x0: 5.0, sig_x: 2.0, y0: 5.0, sig_y: 2.0 },
-            Gaussian { a: -5.0, x0: 0.0, sig_x: 2.0, y0: 5.0, sig_y: 2.0 },
-            Gaussian { a: -5.0, x0: 5.0, sig_x: 2.0, y0: 0.0, sig_y: 2.0 }
-        ]
+            Gaussian { a: -7.0, x0: 15.0, sig_x: 5.0, y0: 7.5, sig_y: 5.0 },
+            Gaussian { a: -13.0, x0: 23.0, sig_x: 2.0, y0: 5.0, sig_y: 2.0 },
+            Gaussian { a: -7.0, x0: 10.0, sig_x: 2.5, y0: 21.0, sig_y: 2.5 },
+            Gaussian { a: -7.0, x0: 7.0, sig_x: 2.5, y0: 18.0, sig_y: 2.5 },
+            Gaussian { a: 15.0, x0: 25.0, sig_x: 7.0, y0: 20.0, sig_y: 7.0 },
+            Gaussian { a: 20.0, x0: 20.0, sig_x: 10.0, y0: -5.0, sig_y: 1.0 },
+            Gaussian { a: 20.0, x0: -2.0, sig_x: 1.5, y0: 20.0, sig_y: 10.0 },
+            Gaussian { a: 10.0, x0: 0.0, sig_x: 3.0, y0: 3.0, sig_y: 3.0 }
+        ],
     };
     let chain_config = ChainConfig {
         use_springs: 0.0,
-        pin_ends: false,
+        pin_ends: true,
         relax_ends: true,
-        start: Point { x: 7.5, y: 0.0 },
-        end: Point { x: 0.0, y: 7.5 },
-        elements: 20,
+        start: Point { x: 23.0, y: 5.0 },
+        end: Point { x: 8.0, y: 19.0 },
+        elements: 50,
     };
 
     let image_config = ImageConfig {
-        x0: -2.0,
-        y0: -2.0,
-        width: 10.0,
-        height: 10.0,
-        resolution_x: 2000,
-        resolution_y: 2000,
+        x0: 0.0,
+        y0: 0.0,
+        width: 27.0,
+        height: 25.0,
+        resolution_x: 2700,
+        resolution_y: 2500,
         point_size: 0.1,
-        line_width: 0.05,
+        line_width: 0.02,
     };
 
     Config {
