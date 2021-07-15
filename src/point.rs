@@ -62,8 +62,9 @@ impl Point {
 
         let a = prev - *self; //vector from this point to the previous one
         let b = next - *self; //vector from this point to the next one
-        let spring = -spring_effect * (a + b) / 2; //how much we need to move to land in the middle of the two other points
+        let spring = spring_effect * (a + b) / 2; //how much we need to move to land in the middle of the two other points
         let spring_forces = tangent.dot_product(spring) * tangent;
+        //let spring_forces = spring;
 
         *self + gradient_forces + spring_forces
     }
