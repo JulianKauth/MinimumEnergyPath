@@ -72,13 +72,13 @@ impl Image {
         let mut x = img_start_x as f64;
         let mut y = img_start_y as f64;
         for _ in 0..steps as u32 {
-            if !self.config.pixel_in_image(x as i32, y as i32) {
-                continue;
-            }
-            if self.config.line_width <= 2.0f64.sqrt() {
-                image_buffer.put_pixel(x as u32, y as u32, image::Rgb(*color));
+            if self.config.line_width / self.config.width * self.config.resolution_x as f64 <= 1.0 &&
+                self.config.line_width / self.config.height * self.config.resolution_y as f64 <= 1.0 {
+                if self.config.pixel_in_image(x as i32, y as i32) {
+                    image_buffer.put_pixel(x as u32, y as u32, image::Rgb(*color));
+                }
             } else {
-                self.draw_circle(image_buffer, Point { x, y }, self.config.line_width);
+                self.draw_circle(image_buffer, self.config.point_for_pixel(x as u32, y as u32), self.config.line_width, color);
             }
 
             x += dx;
@@ -86,17 +86,17 @@ impl Image {
         }
     }
 
-    fn draw_circle(&self, image_buffer: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, p: Point, radius: f64) {
+    fn draw_circle(&self, image_buffer: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, p: Point, radius: f64, color: &[u8; 3]) {
         let (x, y) = self.config.pixel_for_point(p);
         let rx = (radius * self.config.resolution_x as f64 / self.config.width) as i32;
         let ry = (radius * self.config.resolution_y as f64 / self.config.height) as i32;
-        for dx in -rx..=rx {
-            for dy in -ry..=ry {
+        for dx in -rx..rx + 1 {
+            for dy in -ry..ry + 1 {
                 let pos_x = x + dx;
                 let pos_y = y + dy;
                 if self.config.pixel_in_image(pos_x, pos_y)
                     && p.distance_sq(self.config.point_for_pixel(pos_x as u32, pos_y as u32)) < radius.powi(2) {
-                    image_buffer.put_pixel(pos_x as u32, pos_y as u32, image::Rgb([255, 0, 0]))
+                    image_buffer.put_pixel(pos_x as u32, pos_y as u32, image::Rgb(*color))
                 }
             }
         }
@@ -104,7 +104,7 @@ impl Image {
 
     fn draw_chain(&self, image_buffer: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, points: &Chain) {
         for point in &points.elements {
-            self.draw_circle(image_buffer, *point, self.config.point_size);
+            self.draw_circle(image_buffer, *point, self.config.point_size, &[255u8, 0, 0]);
         }
     }
 
